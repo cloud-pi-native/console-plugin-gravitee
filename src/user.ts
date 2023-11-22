@@ -2,7 +2,7 @@ import axios from 'axios'
 import { addAttributeKeycloak, axiosOptions, removeAttributeKeycloak } from './utils'
 import KeycloakAdminClient from '@keycloak/keycloak-admin-client'
 import UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation'
-import { createUserAPI } from './src/apim'
+import { createUserAPI } from './apim'
 
 export const keycloakToken = process.env.KEYCLOAK_ADMIN_PASSWORD
 export const keycloakUser = process.env.KEYCLOAK_ADMIN

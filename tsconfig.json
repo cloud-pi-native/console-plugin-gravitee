@@ -112,5 +112,5 @@
   ],
   "include": [
     "*.ts"
-, "src/apim.ts"  ]
+, "src/apim.ts", "src/user.ts"  ]
 }

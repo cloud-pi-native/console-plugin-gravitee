@@ -32,8 +32,6 @@ jobs:
         path: dist  # Specify the directory where your build output is located
 
   release:
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/release.yml
     needs: build
-    steps:
-    - uses: .github/workflows/release.yml
-      if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'

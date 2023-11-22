@@ -1,10 +1,12 @@
 // @ts-nocheck
 
 import type { ServiceInfos } from '@dso-console/server/src/plugins/services.js'
+import { apimUrl } from './utils'
+
 
 const infos: ServiceInfos = {
   name: 'apim',
-  to: () => 'https://console-dev.apps.c7.numerique-interieur.com',
+  to: () => `${apimUrl}`,
   title: 'Apim Gravitee',
   imgSrc: '/img/gitlab.svg',
   description: 'Apim est un service d\'apim.',

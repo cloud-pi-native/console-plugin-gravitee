@@ -10,10 +10,12 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Download Build Artifact
-      if: github.ref == 'refs/heads/main'
       uses: actions/download-artifact@v2
       with:
         name: build-artifact
+
+    - run: |
+        ls -al
 
     - name: Create Release
       if: github.ref == 'refs/heads/main'

@@ -1,6 +1,6 @@
 // @ts-nocheck
-import KeycloakAdminClient from '@keycloak/keycloak-admin-client'
-import UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation'
+import type KeycloakAdminClient from '@keycloak/keycloak-admin-client'
+import type UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation'
 
 export const removeTrailingSlash = (url: string | undefined) => url?.endsWith('/')
   ? url?.slice(0, -1)

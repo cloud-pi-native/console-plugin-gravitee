@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import axios from 'axios'
-import { axiosOptions } from './utils'
+import { axiosOptions } from './utils.js'
 
 export const createUserAPI = async (user) => {
   const requestBody = {

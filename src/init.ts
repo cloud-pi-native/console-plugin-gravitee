@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { RegisterFn } from '@dso-console/server/src/plugins'
+import type { RegisterFn } from '@dso-console/server/src/plugins'
 import infos from './infos.js'
 import { archiveDsoProject, createDsoProject, getDsoProjectSecrets } from './index.js'
 export const init = (register: RegisterFn) => {

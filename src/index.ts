@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { StepCall } from '@dso-console/server/src/plugins/hooks/hook.js'
-import { ArchiveProjectExecArgs, CreateProjectExecArgs, ProjectBase } from '@dso-console/server/src/plugins/hooks/project.js'
+import type { ArchiveProjectExecArgs, CreateProjectExecArgs, ProjectBase } from '@dso-console/server/src/plugins/hooks/project.js'
 import { createUser, getUserById } from './user.js'
 import { addUserToApp, createGraviteeApplication, deleteApplication, getDsoToken, subscribeToDsoApi } from './applications.js'
 import KcAdminClient from '@keycloak/keycloak-admin-client'

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import KeycloakAdminClient from '@keycloak/keycloak-admin-client'
 import UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation'
 

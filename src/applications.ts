@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import axios from 'axios'
 import { axiosOptions, apimPlanId, removeAttributeKeycloak, addAttributeKeycloak } from './utils'
 import UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation'

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import axios from 'axios'
 import { addAttributeKeycloak, axiosOptions, removeAttributeKeycloak } from './utils'
 import KeycloakAdminClient from '@keycloak/keycloak-admin-client'

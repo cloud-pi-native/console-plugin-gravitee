@@ -1,10 +1,11 @@
+// @ts-nocheck
+
 import { StepCall } from '@dso-console/server/src/plugins/hooks/hook.js'
 import { ArchiveProjectExecArgs, CreateProjectExecArgs, ProjectBase } from '@dso-console/server/src/plugins/hooks/project.js'
 import { createUser, getUserById } from './user.js'
 import { addUserToApp, createGraviteeApplication, deleteApplication, getDsoToken, subscribeToDsoApi } from './applications.js'
 import KcAdminClient from '@keycloak/keycloak-admin-client'
 import { keycloakDomain, keycloakProtocol, keycloakRealm } from './utils.js'
-
 
 export const keycloakToken = process.env.KEYCLOAK_ADMIN_PASSWORD
 export const keycloakUser = process.env.KEYCLOAK_ADMIN

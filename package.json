@@ -10,12 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@dso-console/server": "^6.2.2",
     "@keycloak/keycloak-admin-client": "^22.0.5",
     "axios": "^1.6.2",
     "typescript-transform-paths": "^3.4.6"
   },
   "devDependencies": {
+    "@dso-console/server": "^6.2.2",
     "@types/node": "^20.9.4"
   }
 }

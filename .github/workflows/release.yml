@@ -13,6 +13,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: build-artifact
+        path: dist
 
     - run: |
         ls -al
@@ -27,6 +28,9 @@ jobs:
         tag_name: v0.0.1
         release_name: Release v0.0.1
         body: Release notes for v0.0.1
+    
+    - run: |
+        zip -r dist.zip dist/*
 
     - name: Upload Release Artifact
       if: github.ref == 'refs/heads/main'
@@ -36,6 +40,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist
+        asset_path: ./dist.zip
         asset_name: build-artifact.zip
-        asset_content_type: application/octet-stream
+        asset_content_type: application/gzip

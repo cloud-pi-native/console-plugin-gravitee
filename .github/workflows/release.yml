@@ -15,19 +15,20 @@ jobs:
         name: build-artifact
         path: dist
 
-    - run: |
-        ls -al
+    - name: Extract package version
+      id: package_version
+      run: echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
 
+    - run: echo v${{ steps.package_version.outputs.version }}
     - name: Create Release
-      if: github.ref == 'refs/heads/main'
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v0.0.4
-        release_name: Release v0.0.4
-        body: Release notes for v0.0.4
+        tag_name: v${{ steps.package_version.outputs.version }}
+        release_name: Release v${{ steps.package_version.outputs.version }}
+        body: Release notes for v${{ steps.package_version.outputs.version }}
     
     - run: |
         zip -r dist.zip dist/*

@@ -34,8 +34,8 @@ export const createUser = async (user, kcClient: KeycloakAdminClient) => {
     try {
       const newUser = await createUserAPI(user)
       const keyAttribute = 'gravitee_id'
-      console.log("add user attributes: ",  { [keyAttribute + "'"]: [newUser.id] })
-      await addAttributeKeycloak(kcUser, kcClient, { ["'" + keyAttribute + "'"]: [newUser.id] })
+      console.log('add user attributes: ', { [keyAttribute]: [newUser.id] })
+      await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
       return newUser
     } catch (e) {
       console.log('Create APIM USER error: ', e)

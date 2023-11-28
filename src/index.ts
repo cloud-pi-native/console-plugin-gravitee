@@ -26,12 +26,14 @@ export const getkcClient = async () => {
 }
 
 export const createDsoProject: StepCall<CreateProjectExecArgs> = async (payload) => {
+  console.log('azaaaaaaalnzlegnbmeakjgblzbglizegbmabg mojbgmijberijgboaibgmiuzbaqmiugbmaeizjbgriub')
   try {
     const kcClient = await getkcClient()
     const { project, organization, owner } = payload.args
-    const kcUser = await getUserById(kcClient, owner.id)
+    let kcUser = await getUserById(kcClient, owner.id)
     const projectName = `${organization}-${project}`
-    const apimUser = await createUser(owner, kcClient)
+    const apimUser = await createUser(owner, kcClient, kcUser)
+    kcUser = await getUserById(kcClient, owner.id) // refresh values
     const application = await createGraviteeApplication(owner, { name: projectName }, kcUser, kcClient)
     const addUser = await addUserToApp(apimUser.id, application.id)
     if (addUser !== true) {

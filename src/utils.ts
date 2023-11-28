@@ -88,14 +88,14 @@ export interface UserModel {
 
 export const addAttributeKeycloak = async (kcUser: UserRepresentation,
   kcClient: KeycloakAdminClient,
-  attributes: Record<string, any>) => {
+  key: string,
+  value: any) => {
   try {
-    console.log(attributes)
-    kcUser.attributes = attributes
+    kcUser.attributes = { ...kcUser.attributes, [key]: [value] }
     await kcClient.users.update({ id: kcUser.id }, kcUser)
     return kcUser
   } catch (e) {
-    console.log('update user keycloak attributes error', e)
+    console.error('update user keycloak attributes error', e)
     throw new Error('Error while updating kc user attributes')
   }
 }

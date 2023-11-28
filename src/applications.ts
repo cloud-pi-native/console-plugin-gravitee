@@ -58,7 +58,9 @@ export const createGraviteeApplication = async (user: { email: string, username:
       url: '/management/organizations/DEFAULT/environments/DEFAULT/applications',
       data: requestBody,
     })
-    await addAttributeKeycloak(kcUser, kcClient, { [project.name]: [newApp.data.id] })
+    console.log('kc_user_app', kcUser)
+    await addAttributeKeycloak(kcUser, kcClient, project.name, newApp.data.id)
+    // await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
     return newApp.data
   } catch (e) {
     console.log('Create APIM App error: ', e)

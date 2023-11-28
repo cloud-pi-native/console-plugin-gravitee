@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import axios from 'axios'
-import { addAttributeKeycloak, axiosOptions, removeAttributeKeycloak } from './utils.js'
+import { axiosOptions, removeAttributeKeycloak } from './utils.js'
 import type KeycloakAdminClient from '@keycloak/keycloak-admin-client'
 import type UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation'
 import { createUserAPI } from './apim.js'
@@ -13,13 +13,13 @@ export const getUserById = async (kcClient: KeycloakAdminClient, id: string):Pro
   return (await kcClient.users.findOne({ id }))
 }
 
-export const createUser = async (user, kcClient: KeycloakAdminClient) => {
+export const createUser = async (user, kcClient: KeycloakAdminClient, kcUser: UserRepresentation) => {
   user.username = createUsername(user.email)
   try {
-    const kcUser = await getUserById(kcClient, user.id)
     console.log('kcUser:', kcUser)
     try {
-      const graviteeId = kcUser.attributes.gravitee_id
+      // eslint-disable-next-line dot-notation
+      const graviteeId = kcUser.attributes['gravitee']
       const existingUser = await getUser(graviteeId)
       console.log('graviteeId', graviteeId)
       console.log('existingUser', existingUser)
@@ -32,10 +32,9 @@ export const createUser = async (user, kcClient: KeycloakAdminClient) => {
       console.log(`User ${user.username} not exist, creation will follow ...`)
     }
     try {
-      const newUser = await createUserAPI(user)
-      const keyAttribute = 'gravitee_id'
-      console.log('add user attributes: ', { [keyAttribute]: [newUser.id] })
-      await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
+      const newUser = await createUserAPI(user, kcUser, kcClient)
+      // const keyAttribute = 'gravitee_id'.toString()
+      // await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
       return newUser
     } catch (e) {
       console.log('Create APIM USER error: ', e)

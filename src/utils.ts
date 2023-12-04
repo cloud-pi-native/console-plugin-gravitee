@@ -10,6 +10,7 @@ export const apimUrl = removeTrailingSlash(process.env.APIM_URL)
 export const apimToken = process.env.APIM_TOKEN
 export const apimApiId = process.env.APIM_API_ID
 export const apimPlanId = process.env.APIM_PLAN_ID
+export const gatewayUrl = process.env.GATEWAY_URL
 export const axiosOptions = {
   baseURL: `${apimUrl}`,
   headers: { Authorization: 'Bearer ' + apimToken },
@@ -116,7 +117,7 @@ export const removeAttributeKeycloak = async (
 
     return kcUser
   } catch (e) {
-    console.log('remove user keycloak attribute error', e)
+    console.error('remove user keycloak attribute error', e)
     throw new Error('Error while updating kc user attributes')
   }
 }

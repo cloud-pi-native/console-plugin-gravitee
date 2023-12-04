@@ -16,16 +16,11 @@ export const getUserById = async (kcClient: KeycloakAdminClient, id: string):Pro
 export const createUser = async (user, kcClient: KeycloakAdminClient, kcUser: UserRepresentation) => {
   user.username = createUsername(user.email)
   try {
-    console.log('kcUser:', kcUser)
     try {
       // eslint-disable-next-line dot-notation
       const graviteeId = kcUser.attributes['gravitee']
       const existingUser = await getUser(graviteeId)
-      console.log('graviteeId', graviteeId)
-      console.log('existingUser', existingUser)
       if (existingUser.id !== -1) {
-        console.log('existingUser', existingUser)
-        console.log('user already exist continue ..')
         return existingUser
       }
     } catch (e) {
@@ -37,10 +32,10 @@ export const createUser = async (user, kcClient: KeycloakAdminClient, kcUser: Us
       // await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
       return newUser
     } catch (e) {
-      console.log('Create APIM USER error: ', e)
+      console.error('Create APIM USER error: ', e)
     }
   } catch (e) {
-    console.log('something went wrong')
+    console.error('something went wrong')
   }
 }
 
@@ -69,7 +64,7 @@ export const deleteUser = async (userId: string, kcClient: KeycloakAdminClient) 
     const kcUser = await getUserById(kcClient, userId)
     await removeAttributeKeycloak(kcUser, kcClient, 'gravitee_id')
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 

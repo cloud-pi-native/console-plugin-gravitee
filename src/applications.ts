@@ -2,7 +2,7 @@
 
 import axios from 'axios'
 import { axiosOptions, apimPlanId, removeAttributeKeycloak, addAttributeKeycloak } from './utils.js'
-import UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation'
+import UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation.js'
 import KeycloakAdminClient from '@keycloak/keycloak-admin-client'
 
 export const check = async () => {
@@ -47,8 +47,6 @@ export const createGraviteeApplication = async (user: { email: string, username:
     },
   }
   if (existingApp.id !== -1) {
-    // TODO EDIT APP
-    console.log('application already exists, continue ...')
     return existingApp
   }
   try {
@@ -58,12 +56,11 @@ export const createGraviteeApplication = async (user: { email: string, username:
       url: '/management/organizations/DEFAULT/environments/DEFAULT/applications',
       data: requestBody,
     })
-    console.log('kc_user_app', kcUser)
     await addAttributeKeycloak(kcUser, kcClient, project.name, newApp.data.id)
     // await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
     return newApp.data
   } catch (e) {
-    console.log('Create APIM App error: ', e)
+    console.error('Create APIM App error: ', e)
     return { id: -1 }
   }
 }
@@ -113,7 +110,7 @@ export const addUserToApp = async (idUser: string, idApp: string) => {
     })
     return true
   } catch (e) {
-    console.log('Add user to App error')
+    console.error('Add user to App error')
     return false
   }
 }
@@ -128,11 +125,8 @@ export const subscribeToDsoApi = async (idApp: string) => {
       headers,
       data: {},
     })
-    console.log('OK SUBSCRIBE')
     return suscribe.data
   } catch (e) {
-    console.log('Suscribe already exist')
-    console.log(e.message)
     return { id: -1 }
   }
 }
@@ -144,9 +138,7 @@ export const getDsoToken = async (applicationId: string, subscriptionId: string)
       url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${applicationId}/subscriptions/${subscriptionId}/apikeys`,
       method: 'get',
     })
-    console.log('clé', appKeys.data)
     const appKey = appKeys.data[0].key
-
     if (appKey) {
       return appKey
     } else {
@@ -166,6 +158,6 @@ export const deleteApplication = async (applicationId: string, applicationName: 
     })
     await removeAttributeKeycloak(kcUser, kcClient, applicationName)
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }

@@ -5,7 +5,7 @@ import type { ArchiveProjectExecArgs, CreateProjectExecArgs, ProjectBase } from 
 import { createUser, getUserById } from './user.js'
 import { addUserToApp, createGraviteeApplication, deleteApplication, getDsoToken, subscribeToDsoApi } from './applications.js'
 import KcAdminClient from '@keycloak/keycloak-admin-client'
-import { keycloakDomain, keycloakProtocol, keycloakRealm } from './utils.js'
+import { gatewayUrl, keycloakDomain, keycloakProtocol, keycloakRealm } from './utils.js'
 
 export const keycloakToken = process.env.KEYCLOAK_ADMIN_PASSWORD
 export const keycloakUser = process.env.KEYCLOAK_ADMIN
@@ -26,7 +26,6 @@ export const getkcClient = async () => {
 }
 
 export const createDsoProject: StepCall<CreateProjectExecArgs> = async (payload) => {
-  console.log('azaaaaaaalnzlegnbmeakjgblzbglizegbmabg mojbgmijberijgboaibgmiuzbaqmiugbmaeizjbgriub')
   try {
     const kcClient = await getkcClient()
     const { project, organization, owner } = payload.args
@@ -77,7 +76,6 @@ export const archiveDsoProject: StepCall<ArchiveProjectExecArgs> = async (payloa
     const kcUser = await getUserById(kcClient, owner.id)
     const projectName = `${organization}-${project}`
     const applicationId = kcUser.attributes[projectName]
-    console.log(applicationId)
     await deleteApplication(applicationId, projectName, kcUser, kcClient)
     return {
       status: {
@@ -101,7 +99,16 @@ export const getDsoProjectSecrets: StepCall<ProjectBase> = async (payload) => {
     if (!payload.vault) throw Error('no Vault available')
     // TODO déplacer les secrets dans un dossier pour tout lister plutôt que de sélectionner dans le code
     const apim = (await payload.vault.read('APIM')).data
+    const gitlabSecrets = (await payload.vault.read('GITLAB')).data
     const apiKey = apim.API_KEY
+    const commandTab = [
+      `curl --location --request POST '${gatewayUrl}/gitlab-dso/${gitlabSecrets.GIT_MIRROR_PROJECT_ID}/trigger/pipeline'`,
+      `--header 'X-Gravitee-Api-Key: ${apiKey}'`,
+      `--form 'token=${gitlabSecrets.GIT_MIRROR_TOKEN}'`,
+      '--form \'ref="main"\'',
+      '--form \'variables[PROJECT_NAME]="A REMPLACER"\'',
+      '--form \'variables[BRANCH_NAME]="A REMPLACER"\'',
+    ].join('\\\n')
     return {
       status: {
         result: 'OK',
@@ -109,6 +116,7 @@ export const getDsoProjectSecrets: StepCall<ProjectBase> = async (payload) => {
       },
       secrets: {
         'API-KEY': apiKey,
+        'CURL-CMD-GATEWAY': commandTab,
       },
     }
   } catch (error) {

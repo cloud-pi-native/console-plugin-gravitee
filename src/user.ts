@@ -9,63 +9,48 @@ import { createUserAPI } from './apim.js'
 export const keycloakToken = process.env.KEYCLOAK_ADMIN_PASSWORD
 export const keycloakUser = process.env.KEYCLOAK_ADMIN
 
-export const getUserById = async (kcClient: KeycloakAdminClient, id: string):Promise<UserRepresentation> => {
-  return (await kcClient.users.findOne({ id }))
+export const getUserById = async (kcClient: KeycloakAdminClient, id: string): Promise<UserRepresentation> => {
+  return await kcClient.users.findOne({ id })
 }
 
 export const createUser = async (user, kcClient: KeycloakAdminClient, kcUser: UserRepresentation) => {
-  user.username = createUsername(user.email)
   try {
-    try {
-      // eslint-disable-next-line dot-notation
-      const graviteeId = kcUser.attributes['gravitee']
-      const existingUser = await getUser(graviteeId)
-      if (existingUser.id !== -1) {
-        return existingUser
-      }
-    } catch (e) {
-      console.log(`User ${user.username} not exist, creation will follow ...`)
-    }
-    try {
-      const newUser = await createUserAPI(user, kcUser, kcClient)
-      // const keyAttribute = 'gravitee_id'.toString()
-      // await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
-      return newUser
-    } catch (e) {
-      console.error('Create APIM USER error: ', e)
-    }
-  } catch (e) {
-    console.error('something went wrong')
+    user.username = createUsername(user.email)
+    // eslint-disable-next-line dot-notation
+    const graviteeId = kcUser?.attributes['gravitee']
+    const existingUser = await getUser(graviteeId)
+    if (existingUser.id !== -1) {
+      console.log(`User already exist in apim, continue ...`)
+      return existingUser
+    } else throw new Error()
+  } catch {
+    const newUser = await createUserAPI(user, kcUser, kcClient)
+    // const keyAttribute = 'gravitee_id'.toString()
+    // await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
+    console.log(`Create user in gravitee with username: ${user.username}`)
+    return newUser
   }
 }
 
 export const createUsername = (email: string) => email.replace('@', '.')
 
 export const getUser = async (id: string) => {
-  try {
-    const user = await axios({
-      ...axiosOptions,
-      url: `/management/organizations/DEFAULT/environments/DEFAULT/users/${id}`,
-      method: 'get',
-    })
-    return user.data
-  } catch (e) {
-    return { email: '', username: '', id: -1 }
-  }
+  const user = await axios({
+    ...axiosOptions,
+    url: `/management/organizations/DEFAULT/environments/DEFAULT/users/${id}`,
+    method: 'get',
+  })
+  return user.data
 }
 
 export const deleteUser = async (userId: string, kcClient: KeycloakAdminClient) => {
-  try {
-    await axios({
-      ...axiosOptions,
-      url: `/management/organizations/DEFAULT/users/${userId}`,
-      method: 'delete',
-    })
-    const kcUser = await getUserById(kcClient, userId)
-    await removeAttributeKeycloak(kcUser, kcClient, 'gravitee_id')
-  } catch (error) {
-    console.error(error)
-  }
+  await axios({
+    ...axiosOptions,
+    url: `/management/organizations/DEFAULT/users/${userId}`,
+    method: 'delete',
+  })
+  const kcUser = await getUserById(kcClient, userId)
+  await removeAttributeKeycloak(kcUser, kcClient, 'gravitee_id')
 }
 
 export const getUserByEmail = async (kcClient: KeycloakAdminClient, email: string) => {

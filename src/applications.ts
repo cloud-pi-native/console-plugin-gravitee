@@ -35,34 +35,24 @@ export const check = async () => {
   }
 }
 
-export const createGraviteeApplication = async (user: { email: string, username: string, id: string, firstname: string, lastname: string }, project: { name: string }, kcUser: UserRepresentation, kcClient: KeycloakAdminClient) => {
-  const existingApp = await getGraviteeApp(project.name)
+export const createGraviteeApplication = async (project: string) => {
   const requestBody = {
-    name: project.name,
-    description: `DSO App for project ${project.name}`,
+    name: project,
+    description: `DSO App for project ${project}`,
     settings: {
       app: {
-        client_id: project.name,
+        client_id: project,
       },
     },
   }
-  if (existingApp.id !== -1) {
-    return existingApp
-  }
-  try {
-    const newApp = await axios({
-      ...axiosOptions,
-      method: 'post',
-      url: '/management/organizations/DEFAULT/environments/DEFAULT/applications',
-      data: requestBody,
-    })
-    await addAttributeKeycloak(kcUser, kcClient, project.name, newApp.data.id)
-    // await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
-    return newApp.data
-  } catch (e) {
-    console.error('Create APIM App error: ', e)
-    return { id: -1 }
-  }
+  const newApp = await axios({
+    ...axiosOptions,
+    method: 'post',
+    url: '/management/organizations/DEFAULT/environments/DEFAULT/applications',
+    data: requestBody,
+  })
+  console.log(`Create Application for project: ${project}`)
+  return newApp.data
 }
 
 export const getGraviteeApp = async (name: string) => {
@@ -77,7 +67,7 @@ export const getGraviteeApp = async (name: string) => {
       url: '/management/organizations/DEFAULT/environments/DEFAULT/applications/_paged',
       method: 'get',
       params,
-      paramsSerializer: function paramsSerializer (params) {
+      paramsSerializer: function paramsSerializer(params) {
         // "Hide" the `answer` param
         return Object.entries(Object.assign({}, params, { answer: 'HIDDEN' }))
           .map(([key, value]) => `${key}=${value}`)
@@ -88,7 +78,7 @@ export const getGraviteeApp = async (name: string) => {
     if (appQuery) {
       return appQuery
     } else {
-      throw new Error('App not exist')
+      return { id: -1 }
     }
   } catch (e) {
     return { id: -1 }
@@ -101,63 +91,47 @@ export const addUserToApp = async (idUser: string, idApp: string) => {
     reference: '',
     role: 'USER',
   }
-  try {
-    await axios({
-      ...axiosOptions,
-      method: 'post',
-      url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${idApp}/members`,
-      data: requestBody,
-    })
-    return true
-  } catch (e) {
-    console.error('Add user to App error')
-    return false
-  }
+  await axios({
+    ...axiosOptions,
+    method: 'post',
+    url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${idApp}/members`,
+    data: requestBody,
+  })
+  return true
 }
 
 export const subscribeToDsoApi = async (idApp: string) => {
-  try {
-    const headers = { ...axiosOptions.headers, accept: 'application/json' }
-    const suscribe = await axios({
-      baseURL: axiosOptions.baseURL,
-      url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${idApp}/subscriptions/?plan=${apimPlanId}`,
-      method: 'post',
-      headers,
-      data: {},
-    })
-    return suscribe.data
-  } catch (e) {
-    return { id: -1 }
-  }
+  const headers = { ...axiosOptions.headers, accept: 'application/json' }
+  const suscribe = await axios({
+    baseURL: axiosOptions.baseURL,
+    url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${idApp}/subscriptions/?plan=${apimPlanId}`,
+    method: 'post',
+    headers,
+    data: {},
+  })
+  return suscribe.data
 }
 
 export const getDsoToken = async (applicationId: string, subscriptionId: string) => {
-  try {
-    const appKeys = await axios({
-      ...axiosOptions,
-      url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${applicationId}/subscriptions/${subscriptionId}/apikeys`,
-      method: 'get',
-    })
-    const appKey = appKeys.data[0].key
-    if (appKey) {
-      return appKey
-    } else {
-      throw new Error("Keys doesn't exist")
-    }
-  } catch (e) {
-    return { key: -1 }
+  const appKeys = await axios({
+    ...axiosOptions,
+    url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${applicationId}/subscriptions/${subscriptionId}/apikeys`,
+    method: 'get',
+  })
+  const appKey = appKeys.data[0].key
+  if (appKey) {
+    return appKey
+  } else {
+    console.log('API-KEY does\'t exist')
+    throw new Error('Keys doesn\'t exist')
   }
 }
 
 export const deleteApplication = async (applicationId: string, applicationName: string, kcUser: UserRepresentation, kcClient: KeycloakAdminClient) => {
-  try {
-    await axios({
-      ...axiosOptions,
-      url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${applicationId}`,
-      method: 'delete',
-    })
-    await removeAttributeKeycloak(kcUser, kcClient, applicationName)
-  } catch (error) {
-    console.error(error)
-  }
+  await axios({
+    ...axiosOptions,
+    url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${applicationId}`,
+    method: 'delete',
+  })
+  await removeAttributeKeycloak(kcUser, kcClient, applicationName)
 }

@@ -10,23 +10,18 @@ export const createUserAPI = async (user, kcUser: UserRepresentation, kcClient: 
     firstname: user.firstName,
     lastname: user.lastName,
     email: user.email,
-    source: 'keycloak',
+    source: 'memory',
     sourceId: user.id,
     service: false,
     primary_owner: true,
 
   }
-  try {
-    const newUser = await axios({
-      ...axiosOptions,
-      method: 'post',
-      url: '/management/organizations/DEFAULT/environments/DEFAULT/users',
-      data: requestBody,
-    })
-    await addAttributeKeycloak(kcUser, kcClient, 'gravitee', newUser.data.id)
-    return newUser.data
-  } catch (e) {
-    console.error('Create APIM USER error: ', e)
-    throw new Error(e)
-  }
+  const newUser = await axios({
+    ...axiosOptions,
+    method: 'post',
+    url: '/management/organizations/DEFAULT/environments/DEFAULT/users',
+    data: requestBody,
+  })
+  await addAttributeKeycloak(kcUser, kcClient, 'gravitee', newUser.data.id)
+  return newUser.data
 }

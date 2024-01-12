@@ -8,12 +8,9 @@ export const init = (register: RegisterFn) => {
     infos.name,
     {
       createProject: {
-        // @ts-ignore
         main: createDsoProject,
       },
-      // @ts-ignore
       archiveProject: { main: archiveDsoProject },
-      // @ts-ignore
       getProjectSecrets: { main: getDsoProjectSecrets },
     },
   )

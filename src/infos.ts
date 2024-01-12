@@ -5,7 +5,7 @@ import { apimUrl } from './utils.js'
 
 
 const infos: ServiceInfos = {
-  name: 'apim',
+  name: 'apim2',
   to: () => `${apimUrl}`,
   title: 'Apim Gravitee',
   imgSrc: 'https://www.gravitee.io/hubfs/Gravitee_2022/Images/logo-dark.svg',

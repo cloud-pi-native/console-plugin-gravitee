@@ -10,7 +10,7 @@ export const createUserAPI = async (user, kcUser: UserRepresentation, kcClient: 
     firstname: user.firstName,
     lastname: user.lastName,
     email: user.email,
-    source: 'memory',
+    source: 'keycloak',
     sourceId: user.id,
     service: false,
     primary_owner: true,

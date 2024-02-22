@@ -1,11 +1,10 @@
-// @ts-nocheck
-
 import axios from 'axios'
 import { axiosOptions, addAttributeKeycloak } from './utils.js'
 import UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation.js'
-import KeycloakAdminClient from '@keycloak/keycloak-admin-client.js'
+import KeycloakAdminClient from '@keycloak/keycloak-admin-client'
+import type { UserObject } from '@cpn-console/hooks'
 
-export const createUserAPI = async (user, kcUser: UserRepresentation, kcClient: KeycloakAdminClient) => {
+export const createUserAPI = async (user: UserObject, kcUser: UserRepresentation, kcClient: KeycloakAdminClient) => {
   const requestBody = {
     firstname: user.firstName,
     lastname: user.lastName,

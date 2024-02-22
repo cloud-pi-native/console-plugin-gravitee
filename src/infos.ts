@@ -1,15 +1,12 @@
-// @ts-nocheck
-
-import type { ServiceInfos } from '@dso-console/server/src/plugins/services.js'
-import { apimUrl } from './utils.js'
-
+import { type ServiceInfos } from '@cpn-console/hooks'
+import { getConfig } from './utils.js'
 
 const infos: ServiceInfos = {
-  name: 'apim',
-  to: () => `${apimUrl}`,
-  title: 'Apim Gravitee',
+  name: 'gravitee',
+  to: () => getConfig().apimUrl,
+  title: 'Gravitee',
   imgSrc: 'https://www.gravitee.io/hubfs/Gravitee_2022/Images/logo-dark.svg',
-  description: 'Apim est un service d\'apim.',
+  description: 'Gravitee est un outil d\'API Management / API Gateway',
 }
 
 export default infos

@@ -6,11 +6,11 @@ import type KeycloakAdminClient from '@keycloak/keycloak-admin-client'
 import type UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation'
 import { createUserAPI } from './apim.js'
 
-export const keycloakToken = process.env.KEYCLOAK_ADMIN_PASSWORD
-export const keycloakUser = process.env.KEYCLOAK_ADMIN
+// export const keycloakToken = process.env.KEYCLOAK_ADMIN_PASSWORD
+// export const keycloakUser = process.env.KEYCLOAK_ADMIN
 
 export const getUserById = async (kcClient: KeycloakAdminClient, id: string): Promise<UserRepresentation> => {
-  return await kcClient.users.findOne({ id })
+  return kcClient.users.findOne({ id })
 }
 
 export const createUser = async (user, kcClient: KeycloakAdminClient, kcUser: UserRepresentation) => {
@@ -20,13 +20,11 @@ export const createUser = async (user, kcClient: KeycloakAdminClient, kcUser: Us
     const graviteeId = kcUser?.attributes['gravitee']
     const existingUser = await getUser(graviteeId)
     if (existingUser.id !== -1) {
-      console.log(`User already exist in apim, continue ...`)
+      console.log('User already exist in apim, continue ...')
       return existingUser
-    } else throw new Error()
+    } else throw new Error('Gravitee user not found')
   } catch {
     const newUser = await createUserAPI(user, kcUser, kcClient)
-    // const keyAttribute = 'gravitee_id'.toString()
-    // await addAttributeKeycloak(kcUser, kcClient, { [keyAttribute]: [newUser.id] })
     console.log(`Create user in gravitee with username: ${user.username}`)
     return newUser
   }
@@ -34,6 +32,7 @@ export const createUser = async (user, kcClient: KeycloakAdminClient, kcUser: Us
 
 export const createUsername = (email: string) => email.replace('@', '.')
 
+// TODO : createProject plante ici - 401
 export const getUser = async (id: string) => {
   const user = await axios({
     ...axiosOptions,

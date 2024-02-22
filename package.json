@@ -1,21 +1,43 @@
 {
-  "name": "apim",
-  "version": "0.1.4",
+  "name": "@cpn-console/gravitee-plugin",
   "description": "APIM plugin for DSO console",
-  "main": "index.js",
+  "version": "0.2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "scripts": {
+    "dev": "nodemon --watch src --ext .ts --exec 'npm run build'",
+    "build": "npm run clean:build && npm run compile",
+    "clean:build": "rm -rf ./dist ./types",
+    "compile": "tsc",
+    "format": "eslint ./src --ext .js,.cjs,.ts --fix",
+    "lint": "eslint ./src",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && tsc"
+    "prepare": "husky"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@keycloak/keycloak-admin-client": "^22.0.5",
-    "axios": "^1.6.2",
-    "typescript-transform-paths": "^3.4.6"
+    "@keycloak/keycloak-admin-client": "^23.0.7",
+    "axios": "^1.6.7"
   },
   "devDependencies": {
-    "@dso-console/server": "^6.4.0",
-    "@types/node": "^20.9.4"
-  }
+    "@cpn-console/eslint-config": "^1.0.0",
+    "@cpn-console/hooks": "^1.1.0",
+    "@cpn-console/shared": "^1.0.0",
+    "@cpn-console/ts-config": "^1.0.0",
+    "@cpn-console/vault-plugin": "^1.0.0",
+    "@types/node": "^20.11.24",
+    "husky": "^9.0.11",
+    "nodemon": "^3.1.0",
+    "typescript": "^5.3.3",
+    "typescript-transform-paths": "^3.4.7"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public",
+    "tag": "latest"
+  },
+  "files": [
+    "dist",
+    "types"
+  ]
 }

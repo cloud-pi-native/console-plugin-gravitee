@@ -1,39 +1,7 @@
-// @ts-nocheck
-
 import axios from 'axios'
-import { axiosOptions, apimPlanId, removeAttributeKeycloak, addAttributeKeycloak } from './utils.js'
+import { axiosOptions, getConfig, removeAttributeKeycloak } from './utils.js'
 import UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation.js'
 import KeycloakAdminClient from '@keycloak/keycloak-admin-client'
-
-export const check = async () => {
-  let health
-  try {
-    health = await axios({
-      ...axiosOptions,
-      url: 'health',
-    })
-    if (health.data.status !== 'healthy') {
-      return {
-        status: {
-          result: 'KO',
-          message: health.data.components,
-        },
-      }
-    }
-    return {
-      status: {
-        result: 'OK',
-      },
-    }
-  } catch (error) {
-    return {
-      status: {
-        result: 'KO',
-        message: error.message,
-      },
-    }
-  }
-}
 
 export const createGraviteeApplication = async (project: string) => {
   const requestBody = {
@@ -67,21 +35,17 @@ export const getGraviteeApp = async (name: string) => {
       url: '/management/organizations/DEFAULT/environments/DEFAULT/applications/_paged',
       method: 'get',
       params,
-      paramsSerializer: function paramsSerializer(params) {
+      paramsSerializer: function paramsSerializer (params) {
         // "Hide" the `answer` param
-        return Object.entries(Object.assign({}, params, { answer: 'HIDDEN' }))
+        return Object.entries({ ...params, answer: 'HIDDEN' })
           .map(([key, value]) => `${key}=${value}`)
           .join('&')
       },
     })
-    const appQuery = appList.data.find(elem => elem.name === name)
-    if (appQuery) {
-      return appQuery
-    } else {
-      return { id: -1 }
-    }
+    const app = appList.data.find((app: Record<string, unknown>) => app.name === name)
+    return app
   } catch (e) {
-    return { id: -1 }
+    return undefined
   }
 }
 
@@ -104,7 +68,7 @@ export const subscribeToDsoApi = async (idApp: string) => {
   const headers = { ...axiosOptions.headers, accept: 'application/json' }
   const suscribe = await axios({
     baseURL: axiosOptions.baseURL,
-    url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${idApp}/subscriptions/?plan=${apimPlanId}`,
+    url: `/management/organizations/DEFAULT/environments/DEFAULT/applications/${idApp}/subscriptions/?plan=${getConfig().apimPlanId}`,
     method: 'post',
     headers,
     data: {},
